@@ -34,3 +34,5 @@ server.get('/', (req, res, next) => {
   res.send('');
   next();
 });
+
+module.exports = server;
