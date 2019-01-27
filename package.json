@@ -4,6 +4,7 @@
   "description": "A communication API",
   "main": "server.js",
   "scripts": {
+    "lint": "eslint \"./**/*.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,5 +27,10 @@
   "dependencies": {
     "mongodb": "^3.1.13",
     "restify": "^7.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.15.0"
   }
 }
