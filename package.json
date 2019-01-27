@@ -1,0 +1,30 @@
+{
+  "name": "bleeper",
+  "version": "1.0.0",
+  "description": "A communication API",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavidEredics/Bleeper.git"
+  },
+  "keywords": [
+    "communication",
+    "message",
+    "chat",
+    "rest",
+    "api"
+  ],
+  "author": "Dávid Eredics",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/DavidEredics/Bleeper/issues"
+  },
+  "homepage": "https://github.com/DavidEredics/Bleeper#readme",
+  "dependencies": {
+    "mongodb": "^3.1.13",
+    "restify": "^7.6.0"
+  }
+}
