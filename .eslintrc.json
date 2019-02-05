@@ -4,6 +4,10 @@
         "node": true,
         "mocha": true
     },
+    "rules": {
+        "no-console": "off",
+        "global-require": "off"
+    },
     "overrides": [
         {
             "files": ["*.test.js"],
