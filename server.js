@@ -2,6 +2,7 @@ const restify = require('restify');
 const fs = require('fs');
 
 const config = require('./config');
+const database = require('./database');
 
 const allowHTTP1 = () => {
   if (config.allowHTTP1 === 'true') {
@@ -26,8 +27,21 @@ const serverOptions = () => {
 
 const server = restify.createServer(serverOptions());
 
+server.use(restify.plugins.bodyParser());
+
 server.listen(config.PORT, config.HOST, () => {
   console.log('%s listening at %s', server.name, server.url);
+
+  database.connect((err) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    if (database.DB().serverConfig.isConnected()) {
+      console.log('Connected to db');
+      require('./routes/user')(server);
+    }
+  });
 });
 
 server.get('/', (req, res, next) => {

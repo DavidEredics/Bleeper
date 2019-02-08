@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/DavidEredics/Bleeper#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "mongodb": "^3.1.13",
     "restify": "^7.6.0"
   },
