@@ -32,16 +32,20 @@ server.use(restify.plugins.bodyParser());
 server.listen(config.PORT, config.HOST, () => {
   console.log('%s listening at %s', server.name, server.url);
 
-  database.connect((err) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    if (database.DB().serverConfig.isConnected()) {
-      console.log('Connected to db');
-      require('./routes/user')(server);
-    }
-  });
+  if (config.ENV !== 'test') {
+    database.connect((err) => {
+      if (err) {
+        console.error(err);
+        process.exit(1);
+      }
+      if (database.DB().serverConfig.isConnected()) {
+        console.log('Connected to db');
+        require('./routes/user')(server);
+      }
+    });
+  } else {
+    require('./routes/user')(server);
+  }
 });
 
 server.get('/', (req, res, next) => {

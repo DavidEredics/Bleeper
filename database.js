@@ -23,4 +23,6 @@ const connect = (cb) => {
 
 const DB = () => db;
 
-module.exports = { connect, DB };
+const close = () => client.close(err => err);
+
+module.exports = { connect, DB, close };
