@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint \"./**/*.js\"",
     "pretest": "npm run lint",
-    "test": "cross-env NODE_ENV=test HOST=127.0.0.1 mocha test"
+    "test": "cross-env NODE_ENV=test HOST=127.0.0.1 mocha test/tests.js"
   },
   "repository": {
     "type": "git",
