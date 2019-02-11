@@ -19,10 +19,14 @@ const serverOptions = () => {
         key: fs.readFileSync(config.cert_path + config.key),
         allowHTTP1: allowHTTP1(),
       },
+      name: 'Bleeper',
     };
+    if (config.ENV === 'development') {
+      http2ServerOptions.name = 'Bleeper-dev';
+    }
     return http2ServerOptions;
   }
-  return {};
+  return { name: 'Bleeper-test' };
 };
 
 const server = restify.createServer(serverOptions());
