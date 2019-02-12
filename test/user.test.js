@@ -19,7 +19,7 @@ describe('/user/register', () => {
       })
       .end((err, res) => {
         if (err) { done(err); }
-        res.should.have.status(200);
+        res.should.have.status(201);
         res.should.be.json;
         res.body.should.have.property('Success');
         res.body.Success.should.equal('User successfully added');
@@ -36,7 +36,7 @@ describe('/user/register', () => {
       })
       .end((err, res) => {
         if (err) { done(err); }
-        res.should.have.status(200);
+        res.should.have.status(409);
         res.should.be.json;
         res.body.should.have.property('Error');
         res.body.Error.should.equal('A user already exists with this name');
@@ -52,7 +52,7 @@ describe('/user/register', () => {
       })
       .end((err, res) => {
         if (err) { done(err); }
-        res.should.have.status(200);
+        res.should.have.status(400);
         res.should.be.json;
         res.body.should.have.property('Error');
         res.body.Error.should.equal('Missing property');
@@ -64,7 +64,7 @@ describe('/user/register', () => {
       .post('/user/register')
       .end((err, res) => {
         if (err) { done(err); }
-        res.should.have.status(200);
+        res.should.have.status(400);
         res.should.be.json;
         res.body.should.have.property('Error');
         res.body.Error.should.equal('Request body is empty');

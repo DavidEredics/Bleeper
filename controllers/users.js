@@ -28,9 +28,9 @@ exports.addUser = req => new Promise((resolve, reject) => {
                 if (!bcryptErr) {
                   return database.DB().collection('UserAuth').insertOne({ _id: id, password: hash }).then((result) => {
                     if (result) {
-                      resolve({ Success: 'User successfully added' });
+                      resolve({ status: 201, msg: { Success: 'User successfully added' } });
                     }
-                    resolve({ Error: 'User registration unsuccessful' });
+                    resolve({ status: 500, msg: { Error: 'User registration unsuccessful' } });
                   })
                     .catch((err) => {
                       reject(err);
@@ -39,16 +39,16 @@ exports.addUser = req => new Promise((resolve, reject) => {
                 reject(bcryptErr);
               });
             }
-            resolve({ Error: 'User registration unsuccessful' });
+            resolve({ status: 500, msg: { Error: 'User registration unsuccessful' } });
           })
             .catch((err) => {
               reject(err);
             });
         }
-        resolve({ Error: 'A user already exists with this name' });
+        resolve({ status: 409, msg: { Error: 'A user already exists with this name' } });
       });
     }
-    resolve({ Error: 'Missing property' });
+    resolve({ status: 400, msg: { Error: 'Missing property' } });
   }
-  resolve({ Error: 'Request body is empty' });
+  resolve({ status: 400, msg: { Error: 'Request body is empty' } });
 });
