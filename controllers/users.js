@@ -1,6 +1,15 @@
 const bcrypt = require('bcryptjs');
 const database = require('../database');
 
+function createIndexes() {
+  database.DB().collection('Users').createIndex(
+    { name: 1 },
+    { unique: true },
+  ).catch((err) => {
+    console.error(err);
+  });
+}
+
 // checks if a User exists with the given Name
 function nameCheck(userName) {
   return database.DB().collection('Users').countDocuments({ name: userName }, { limit: 1 }).then((countResult) => {
@@ -12,6 +21,7 @@ function nameCheck(userName) {
 }
 
 exports.addUser = req => new Promise((resolve, reject) => {
+  createIndexes();
   if (req.body) {
     if (req.body.name && req.body.email && req.body.password) {
       return nameCheck(req.body.name).then((nameUsed) => {
