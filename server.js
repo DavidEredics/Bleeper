@@ -31,7 +31,9 @@ const serverOptions = () => {
 
 const server = restify.createServer(serverOptions());
 
-server.use(restify.plugins.bodyParser());
+server.use(restify.plugins.bodyParser({
+  rejectUnknown: true,
+}));
 
 server.listen(config.PORT, config.HOST, () => {
   console.log('%s listening at %s', server.name, server.url);
