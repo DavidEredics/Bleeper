@@ -12,4 +12,16 @@ module.exports = (server) => {
     });
     next();
   });
+
+  server.post('/user/auth', (req, res, next) => {
+    users.authUser(req).then((result) => {
+      res.status(result.status);
+      res.send(result.msg);
+    }).catch((err) => {
+      console.error(err);
+      res.status(500);
+      res.send({ Error: 'User authentication unsuccessful' });
+    });
+    next();
+  });
 };

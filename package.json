@@ -27,8 +27,10 @@
   "homepage": "https://github.com/DavidEredics/Bleeper#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^8.5.0",
     "mongodb": "^3.1.13",
-    "restify": "^7.6.0"
+    "restify": "^7.6.0",
+    "restify-jwt-community": "^1.0.9"
   },
   "devDependencies": {
     "chai": "^4.2.0",

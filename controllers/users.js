@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('../jwt');
 const database = require('../database');
 
 function createIndexes() {
@@ -56,6 +57,51 @@ exports.addUser = req => new Promise((resolve, reject) => {
             });
         }
         resolve({ status: 409, msg: { Error: 'A user already exists with this name' } });
+      });
+    }
+    resolve({ status: 400, msg: { Error: 'Missing property' } });
+  }
+  resolve({ status: 400, msg: { Error: 'Request body is empty' } });
+});
+
+exports.authUser = req => new Promise((resolve, reject) => {
+  if (req.body) {
+    if (req.body.name && req.body.password) {
+      return nameCheck(req.body.name).then((nameExists) => {
+        if (nameExists === true) {
+          const { name, password } = req.body;
+          return database.DB().collection('Users').find({ name }).project({ _id: 1 })
+            .toArray()
+            .then((dbUserId) => {
+              if (dbUserId && dbUserId.length === 1) {
+                const { _id } = dbUserId[0];
+                return database.DB().collection('UserAuth').find({ _id }).project({ _id: 0, password: 1 })
+                  .toArray()
+                  .then((dbUserPassword) => {
+                    if (dbUserPassword && dbUserPassword.length === 1) {
+                      const dbPassword = dbUserPassword[0].password;
+                      return bcrypt.compare(password, dbPassword).then((res) => {
+                        if (res) {
+                          // send jwt token
+                          const authToken = jwt.sign(name);
+                          resolve({ status: 200, msg: { authToken } });
+                        }
+                        resolve({ status: 401, msg: { Error: 'username or password incorrect' } });
+                      });
+                    }
+                    resolve({ status: 500, msg: { Error: 'User authentication unsuccessful' } });
+                  })
+                  .catch((err) => {
+                    reject(err);
+                  });
+              }
+              resolve({ status: 500, msg: { Error: 'User authentication unsuccessful' } });
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        }
+        resolve({ status: 401, msg: { Error: 'username or password incorrect' } });
       });
     }
     resolve({ status: 400, msg: { Error: 'Missing property' } });
