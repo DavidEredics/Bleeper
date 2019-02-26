@@ -12,20 +12,18 @@ function createIndexes() {
 }
 
 // checks if a User exists with the given Name
-function nameCheck(userName) {
-  return database.DB().collection('Users').countDocuments({ name: userName }, { limit: 1 }).then((countResult) => {
-    if (countResult === 0) {
-      return false;
-    }
-    return true;
-  });
-}
+exports.userExists = userName => database.DB().collection('Users').countDocuments({ name: userName }, { limit: 1 }).then((countResult) => {
+  if (countResult === 0) {
+    return false;
+  }
+  return true;
+});
 
 exports.addUser = req => new Promise((resolve, reject) => {
   createIndexes();
   if (req.body) {
     if (req.body.name && req.body.email && req.body.password) {
-      return nameCheck(req.body.name).then((nameUsed) => {
+      return this.userExists(req.body.name).then((nameUsed) => {
         if (nameUsed === false) {
           const User = {
             name: req.body.name,
@@ -67,7 +65,7 @@ exports.addUser = req => new Promise((resolve, reject) => {
 exports.authUser = req => new Promise((resolve, reject) => {
   if (req.body) {
     if (req.body.name && req.body.password) {
-      return nameCheck(req.body.name).then((nameExists) => {
+      return this.userExists(req.body.name).then((nameExists) => {
         if (nameExists === true) {
           const { name, password } = req.body;
           return database.DB().collection('Users').find({ name }).project({ _id: 1 })

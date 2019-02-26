@@ -17,6 +17,7 @@ describe('db connection', () => {
 
 require('./server.test');
 require('./user.test');
+require('./message.test');
 require('./db.test');
 
 describe('cleanup after the tests', () => {

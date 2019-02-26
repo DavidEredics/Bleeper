@@ -95,6 +95,7 @@ describe('/user/auth', () => {
         res.body.authToken.should.have.property('token');
         // validate token
         jwtVerify(res.body.authToken.token).should.equal('valid');
+        global.jwtToken = res.body.authToken.token;
         done();
       });
   });

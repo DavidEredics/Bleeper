@@ -1,8 +1,10 @@
 const restify = require('restify');
 const fs = require('fs');
+const rjwt = require('restify-jwt-community');
 
 const config = require('./config');
 const database = require('./database');
+const jwtSecret = require('./jwt').secret;
 
 const allowHTTP1 = () => {
   if (config.allowHTTP1 === 'true') {
@@ -31,6 +33,27 @@ const serverOptions = () => {
 
 const server = restify.createServer(serverOptions());
 
+// Require authentication for routes with exceptions
+const secretCallback = (req, payload, done) => {
+  done(null, jwtSecret());
+};
+const unlessPath = [
+  '/',
+  '/user/auth',
+];
+if (config.ENV === 'test') {
+  unlessPath.push('/user/register');
+}
+server.use(rjwt({ secret: secretCallback }).unless({ path: unlessPath }));
+
+// Handling authentication error
+server.use((err, req, res, next) => {
+  if (err.name === 'InvalidCredentialsError') {
+    res.send(401, { Error: 'Invalid token' });
+  }
+  return next(err);
+});
+
 server.use(restify.plugins.bodyParser({
   rejectUnknown: true,
 }));
@@ -47,10 +70,12 @@ server.listen(config.PORT, config.HOST, () => {
       if (database.DB().serverConfig.isConnected()) {
         console.log('Connected to db');
         require('./routes/user')(server);
+        require('./routes/message')(server);
       }
     });
   } else {
     require('./routes/user')(server);
+    require('./routes/message')(server);
   }
 });
 

@@ -88,3 +88,12 @@ exports.verify = (token) => {
     return jwtKey();
   }
 };
+
+exports.secret = () => {
+  if (keyOrSecretValue === 'secret') {
+    return config.jwt_secret;
+  }
+  if (keyOrSecretValue === 'key') {
+    return fs.readFileSync(pubKey);
+  }
+};
