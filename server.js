@@ -58,6 +58,8 @@ server.use(restify.plugins.bodyParser({
   rejectUnknown: true,
 }));
 
+server.use(restify.plugins.queryParser({ mapParams: false }));
+
 server.listen(config.PORT, config.HOST, () => {
   console.log('%s listening at %s', server.name, server.url);
 

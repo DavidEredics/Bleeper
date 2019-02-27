@@ -89,3 +89,38 @@ describe('/message/send', () => {
       });
   });
 });
+
+describe('/message/read', () => {
+  it('successfully read messages', (done) => {
+    chai.request(server)
+      .get('/message/read')
+      .set('Authorization', `Bearer ${global.jwtToken}`)
+      .end((err, res) => {
+        if (err) { done(err); }
+        res.should.have.status(200);
+        res.should.be.json;
+        res.body[0].should.have.property('_id');
+        res.body[0].should.have.property('from');
+        res.body[0].should.have.property('to');
+        res.body[0].should.have.property('text');
+        res.body[0].should.have.property('Date');
+        done();
+      });
+  });
+  it('Error: Invalid token', (done) => {
+    chai.request(server)
+      .get('/message/read')
+      .send({
+        to: 'TestUser',
+        text: 'text',
+      })
+      .end((err, res) => {
+        if (err) { done(err); }
+        res.should.have.status(401);
+        res.should.be.json;
+        res.body.should.have.property('Error');
+        res.body.Error.should.equal('Invalid token');
+        done();
+      });
+  });
+});

@@ -12,4 +12,16 @@ module.exports = (server) => {
     });
     next();
   });
+
+  server.get('/message/read', (req, res, next) => {
+    messages.readMessages(req).then((result) => {
+      res.status(result.status);
+      res.send(result.msg);
+    }).catch((err) => {
+      console.error(err);
+      res.status(500);
+      res.send({ Error: 'Reading the messages failed' });
+    });
+    next();
+  });
 };
