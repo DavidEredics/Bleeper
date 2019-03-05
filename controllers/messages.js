@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 const database = require('../database');
 const { userExists } = require('./users');
 
@@ -6,21 +8,37 @@ exports.sendMessage = req => new Promise((resolve, reject) => {
     if (req.body.to && req.body.text) {
       return userExists(req.body.to).then((recipientExists) => {
         if (recipientExists) {
-          const Message = {
-            from: req.user.name,
-            to: req.body.to,
-            text: req.body.text,
-            Date: new Date(Date.now()).toISOString(),
-          };
-          return database.DB().collection('Messages').insertOne(Message).then((insertResult) => {
-            if (insertResult) {
-              resolve({ status: 201, msg: { Success: 'Message successfully sent' } });
+          const sender = () => {
+            if (typeof req.user !== 'undefined') {
+              return req.user.name;
             }
-            resolve({ status: 500, msg: { Error: 'Sending the message failed' } });
-          })
-            .catch((err) => {
-              reject(err);
-            });
+            if (req.header('Authorization')) {
+              const token = req.header('Authorization').split(' ');
+              const decoded = jwt.decode(token[1]);
+              return decoded.name;
+            }
+            if (req.body.from) {
+              return req.body.from;
+            }
+          };
+          if (sender()) {
+            const Message = {
+              from: sender(),
+              to: req.body.to,
+              text: req.body.text,
+              Date: new Date(Date.now()).toISOString(),
+            };
+            return database.DB().collection('Messages').insertOne(Message).then((insertResult) => {
+              if (insertResult) {
+                resolve({ status: 201, msg: { Success: 'Message successfully sent' } });
+              }
+              resolve({ status: 500, msg: { Error: 'Sending the message failed' } });
+            })
+              .catch((err) => {
+                reject(err);
+              });
+          }
+          resolve({ status: 400, msg: { Error: 'The sender is unidentifiable' } });
         }
         resolve({ status: 400, msg: { Error: 'The recipient user does not exists' } });
       });

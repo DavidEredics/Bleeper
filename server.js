@@ -41,8 +41,11 @@ const unlessPath = [
   '/',
   '/user/auth',
 ];
-if (config.ENV === 'test') {
+if (config.ENV === 'test' || config.openReg === 'true') {
   unlessPath.push('/user/register');
+}
+if (config.openReceive === 'true') {
+  unlessPath.push('/message/send');
 }
 server.use(rjwt({ secret: secretCallback }).unless({ path: unlessPath }));
 

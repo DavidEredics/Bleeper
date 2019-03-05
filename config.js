@@ -12,4 +12,6 @@ module.exports = {
   allowHTTP1: process.env.allowHTTP1 || 'true',
   MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost/',
   DB_NAME: process.env.DB_NAME || 'Bleeper',
+  openReg: process.env.openReg || 'false',
+  openReceive: process.env.openReceive || 'false',
 };
