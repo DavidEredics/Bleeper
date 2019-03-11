@@ -1,0 +1,53 @@
+{
+  "development": {
+    "name": "Bleeper-dev",
+    "port": 8443,
+    "host": "::1",
+    "allowHTTP1": "true",
+    "certPath": "../cert/",
+    "cert": "cert.pem",
+    "key": "key.pem",
+    "jwtSecret": "",
+    "jwtKeyPath": "../key/",
+    "jwtKeyPrivate": "jwtRS256.key",
+    "jwtKeyPublic": "jwtRS256.pem",
+    "MongoDBurl": "mongodb://localhost/",
+    "dbName": "Bleeper-dev",
+    "openRegistration": "false",
+    "openReceive": "false"
+  },
+  "test": {
+    "name": "Bleeper-test",
+    "port": 8443,
+    "host": "::1",
+    "allowHTTP1": "true",
+    "certPath": "../cert/",
+    "cert": "cert.pem",
+    "key": "key.pem",
+    "jwtSecret": "",
+    "jwtKeyPath": "../key/",
+    "jwtKeyPrivate": "jwtRS256.key",
+    "jwtKeyPublic": "jwtRS256.pem",
+    "MongoDBurl": "mongodb://localhost/",
+    "dbName": "Bleeper-test",
+    "openRegistration": "true",
+    "openReceive": "false"
+  },
+  "production": {
+    "name": "Bleeper",
+    "port": 443,
+    "host": "::",
+    "allowHTTP1": "false",
+    "certPath": "../cert/",
+    "cert": "cert.pem",
+    "key": "key.pem",
+    "jwtSecret": "",
+    "jwtKeyPath": "../key/",
+    "jwtKeyPrivate": "jwtRS256.key",
+    "jwtKeyPublic": "jwtRS256.pem",
+    "MongoDBurl": "mongodb://localhost/",
+    "dbName": "Bleeper",
+    "openRegistration": "false",
+    "openReceive": "false"
+  }
+}

@@ -17,18 +17,15 @@ const serverOptions = () => {
   if (config.ENV !== 'test') {
     const http2ServerOptions = {
       http2: {
-        cert: fs.readFileSync(config.cert_path + config.cert),
-        key: fs.readFileSync(config.cert_path + config.key),
+        cert: fs.readFileSync(config.certPath + config.cert),
+        key: fs.readFileSync(config.certPath + config.key),
         allowHTTP1: allowHTTP1(),
       },
-      name: 'Bleeper',
     };
-    if (config.ENV === 'development') {
-      http2ServerOptions.name = 'Bleeper-dev';
-    }
+    http2ServerOptions.name = config.name;
     return http2ServerOptions;
   }
-  return { name: 'Bleeper-test' };
+  return { name: config.name };
 };
 
 const server = restify.createServer(serverOptions());
@@ -41,7 +38,7 @@ const unlessPath = [
   '/',
   '/user/auth',
 ];
-if (config.ENV === 'test' || config.openReg === 'true') {
+if (config.openReg === 'true') {
   unlessPath.push('/user/register');
 }
 if (config.openReceive === 'true') {
@@ -63,7 +60,7 @@ server.use(restify.plugins.bodyParser({
 
 server.use(restify.plugins.queryParser({ mapParams: false }));
 
-server.listen(config.PORT, config.HOST, () => {
+server.listen(config.port, config.host, () => {
   console.log('%s listening at %s', server.name, server.url);
 
   if (config.ENV !== 'test') {

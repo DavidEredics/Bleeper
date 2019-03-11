@@ -3,11 +3,11 @@ const jwt = require('jsonwebtoken');
 
 const config = require('./config');
 
-const prvKey = config.jwt_key_path + config.jwt_key_prv;
-const pubKey = config.jwt_key_path + config.jwt_key_pub;
+const prvKey = config.jwtKeyPath + config.jwtKeyPrv;
+const pubKey = config.jwtKeyPath + config.jwtKeyPub;
 
 const keyOrSecret = new Promise((resolve, reject) => {
-  if (config.jwt_secret !== '') {
+  if (config.jwtSecret !== '') {
     resolve('secret');
   }
   fs.access(prvKey, fs.constants.R_OK, (prvKeyErr) => {
@@ -47,7 +47,7 @@ exports.sign = (name) => {
     return { iat, exp, token };
   }
   function jwtSecret() {
-    const token = jwt.sign({ name }, config.jwt_secret, { expiresIn: '12h' });
+    const token = jwt.sign({ name }, config.jwtSecret, { expiresIn: '12h' });
     const { iat, exp } = jwt.decode(token);
     return { iat, exp, token };
   }
@@ -72,7 +72,7 @@ exports.verify = (token) => {
     });
   }
   function jwtSecret() {
-    return jwt.verify(token, config.jwt_secret, { algorithms: ['HS256'] }, (err) => {
+    return jwt.verify(token, config.jwtSecret, { algorithms: ['HS256'] }, (err) => {
       if (err) {
         console.error(err);
         return 'invalid';
@@ -91,7 +91,7 @@ exports.verify = (token) => {
 
 exports.secret = () => {
   if (keyOrSecretValue === 'secret') {
-    return config.jwt_secret;
+    return config.jwtSecret;
   }
   if (keyOrSecretValue === 'key') {
     return fs.readFileSync(pubKey);
