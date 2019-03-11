@@ -14,7 +14,7 @@ const allowHTTP1 = () => {
 };
 
 const serverOptions = () => {
-  if (config.ENV !== 'test') {
+  if (config.env !== 'test') {
     const http2ServerOptions = {
       http2: {
         cert: fs.readFileSync(config.certPath + config.cert),
@@ -63,7 +63,7 @@ server.use(restify.plugins.queryParser({ mapParams: false }));
 server.listen(config.port, config.host, () => {
   console.log('%s listening at %s', server.name, server.url);
 
-  if (config.ENV !== 'test') {
+  if (config.env !== 'test') {
     database.connect((err) => {
       if (err) {
         console.error(err);
