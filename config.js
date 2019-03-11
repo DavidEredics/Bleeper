@@ -1,13 +1,23 @@
 const fs = require('fs');
+
+const args = require('minimist')(process.argv.slice(2));
 const config = require('./config.json');
 
 let confFile = {};
-
-if (process.env.confFile) {
+if (args._) {
+  if (args._[0] !== 'test/tests.js' && fs.existsSync(args._[0])) {
+    confFile = JSON.parse(fs.readFileSync(args._[0]));
+  }
+}
+if (args.confFile) {
+  confFile = JSON.parse(fs.readFileSync(args.confFile));
+} else if (args.conf) {
+  confFile = JSON.parse(fs.readFileSync(args.conf));
+} else if (process.env.confFile) {
   confFile = JSON.parse(fs.readFileSync(process.env.confFile));
 }
 
-const env = process.env.NODE_ENV || confFile.env || 'development';
+const env = args.env || args.NODE_ENV || process.env.NODE_ENV || confFile.env || 'development';
 
 if (!Object.prototype.hasOwnProperty.call(config, env)) {
   console.log('no config found for the provided NODE_ENV');
@@ -16,34 +26,34 @@ if (!Object.prototype.hasOwnProperty.call(config, env)) {
 
 module.exports = {
   env,
-  port: process.env.PORT
+  port: args.port || args.p || process.env.PORT
     || confFile.port || config[env].port,
-  host: process.env.HOST
+  host: args.host || process.env.HOST
     || confFile.host || config[env].host,
-  name: process.env.NAME
+  name: args.name || process.env.NAME
     || confFile.name || config[env].name,
-  certPath: process.env.cert_path
+  certPath: args.certPath || process.env.cert_path
     || confFile.certPath || config[env].certPath,
-  cert: process.env.cert
+  cert: args.cert || process.env.cert
     || confFile.cert || config[env].cert,
-  key: process.env.key
+  key: args.key || process.env.key
     || confFile.key || config[env].key,
-  jwtSecret: process.env.jwtSecret
+  jwtSecret: args.jwtSecret || process.env.jwtSecret
     || confFile.jwtSecret || config[env].jwtSecret,
-  jwtKeyPath: process.env.jwtKeyPath
+  jwtKeyPath: args.jwtKeyPath || process.env.jwtKeyPath
     || confFile.jwtKeyPath || config[env].jwtKeyPath,
-  jwtKeyPrv: process.env.jwtKeyPrivate
+  jwtKeyPrv: args.jwtKeyPrivate || process.env.jwtKeyPrivate
     || confFile.jwtKeyPrivate || config[env].jwtKeyPrivate,
-  jwtKeyPub: process.env.jwtKeyPublic
+  jwtKeyPub: args.jwtKeyPublic || process.env.jwtKeyPublic
     || confFile.jwtKeyPublic || config[env].jwtKeyPublic,
-  allowHTTP1: process.env.allowHTTP1
+  allowHTTP1: args.allowHTTP1 || args.http1 || process.env.allowHTTP1
     || confFile.allowHTTP1 || config[env].allowHTTP1,
-  MongoDBurl: process.env.MONGODB_URI
+  MongoDBurl: args.MONGODB_URI || args.MongoDBurl || process.env.MONGODB_URI
     || confFile.MongoDBurl || config[env].MongoDBurl,
-  dbName: process.env.DB_NAME
+  dbName: args.DB_NAME || args.dbName || process.env.DB_NAME
     || confFile.dbName || config[env].dbName,
-  openReg: process.env.openReg
+  openReg: args.openReg || process.env.openReg
     || confFile.openRegistration || config[env].openRegistration,
-  openReceive: process.env.openReceive
+  openReceive: args.openReceive || process.env.openReceive
     || confFile.openReceive || config[env].openReceive,
 };
