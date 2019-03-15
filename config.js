@@ -48,12 +48,22 @@ module.exports = {
     || confFile.jwtKeyPublic || config[env].jwtKeyPublic,
   allowHTTP1: args.allowHTTP1 || args.http1 || process.env.allowHTTP1
     || confFile.allowHTTP1 || config[env].allowHTTP1,
-  MongoDBurl: args.MONGODB_URI || args.MongoDBurl || process.env.MONGODB_URI
-    || confFile.MongoDBurl || config[env].MongoDBurl,
-  dbName: args.DB_NAME || args.dbName || process.env.DB_NAME
-    || confFile.dbName || config[env].dbName,
   openReg: args.openReg || process.env.openReg
     || confFile.openRegistration || config[env].openRegistration,
   openReceive: args.openReceive || process.env.openReceive
     || confFile.openReceive || config[env].openReceive,
+  MongoDBurl: args.MONGODB_URI || args.MongoDBurl || process.env.MONGODB_URI
+    || confFile.MongoDBurl || config[env].MongoDBurl,
+  dbName: args.DB_NAME || args.dbName || process.env.DB_NAME
+    || confFile.dbName || config[env].dbName,
+  MongoDBssl: args.MongoDBssl || args.MongoDBssl || process.env.MongoDBssl
+  || confFile.MongoDBssl || config[env].MongoDBssl,
+  MongoDBsslCA: args.MongoDBsslCA || args.MongoDBsslCA || process.env.MongoDBsslCA
+  || confFile.MongoDBsslCA || config[env].MongoDBsslCA,
+  MongoDBsslCert: args.MongoDBsslCert || args.MongoDBsslCert || process.env.MongoDBsslCert
+  || confFile.MongoDBsslCert || config[env].MongoDBsslCert,
+  MongoDBsslKey: args.MongoDBsslKey || args.MongoDBsslKey || process.env.MongoDBsslKey
+  || confFile.MongoDBsslKey || config[env].MongoDBsslKey,
+  MongoDBsslPass: args.MongoDBsslPass || args.MongoDBsslPass || process.env.MongoDBsslPass
+  || confFile.MongoDBsslPass || config[env].MongoDBsslPass,
 };

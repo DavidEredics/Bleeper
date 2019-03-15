@@ -1,8 +1,29 @@
 const { MongoClient } = require('mongodb');
+const fs = require('fs');
 const config = require('./config');
 
 const uri = config.MongoDBurl;
-const client = new MongoClient(uri, { useNewUrlParser: true });
+const options = {
+  useNewUrlParser: true,
+  appname: config.name,
+};
+if (config.MongoDBssl) {
+  options.ssl = config.MongoDBssl;
+}
+if (config.MongoDBsslCA) {
+  options.sslCA = fs.readFileSync(config.MongoDBsslCA);
+}
+if (config.MongoDBsslCert) {
+  options.sslCert = fs.readFileSync(config.MongoDBsslCert);
+}
+if (config.MongoDBsslKey) {
+  options.sslKey = fs.readFileSync(config.MongoDBsslKey);
+}
+if (config.MongoDBsslPass) {
+  options.sslPass = config.MongoDBsslPass;
+}
+
+const client = new MongoClient(uri, options);
 
 let db = null;
 
