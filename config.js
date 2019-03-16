@@ -38,6 +38,8 @@ module.exports = {
     || confFile.cert || config[env].cert,
   key: args.key || process.env.key
     || confFile.key || config[env].key,
+  ca: args.ca || process.env.ca
+    || confFile.ca || config[env].ca,
   jwtSecret: args.jwtSecret || process.env.jwtSecret
     || confFile.jwtSecret || config[env].jwtSecret,
   jwtKeyPath: args.jwtKeyPath || process.env.jwtKeyPath

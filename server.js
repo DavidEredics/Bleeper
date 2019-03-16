@@ -22,6 +22,9 @@ const serverOptions = () => {
         allowHTTP1: allowHTTP1(),
       },
     };
+    if (config.ca) {
+      http2ServerOptions.http2.ca = fs.readFileSync(config.certPath + config.ca);
+    }
     http2ServerOptions.name = config.name;
     return http2ServerOptions;
   }
