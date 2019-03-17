@@ -63,21 +63,21 @@ exports.sign = (name) => {
 exports.verify = (token) => {
   function jwtKey() {
     const publicKey = fs.readFileSync(pubKey);
-    return jwt.verify(token, publicKey, { algorithms: ['RS256'] }, (err) => {
+    return jwt.verify(token, publicKey, { algorithms: ['RS256'] }, (err, decoded) => {
       if (err) {
         console.error(err);
         return 'invalid';
       }
-      return 'valid';
+      return decoded;
     });
   }
   function jwtSecret() {
-    return jwt.verify(token, config.jwtSecret, { algorithms: ['HS256'] }, (err) => {
+    return jwt.verify(token, config.jwtSecret, { algorithms: ['HS256'] }, (err, decoded) => {
       if (err) {
         console.error(err);
         return 'invalid';
       }
-      return 'valid';
+      return decoded;
     });
   }
 

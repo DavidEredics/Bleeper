@@ -94,7 +94,7 @@ describe('/user/auth', () => {
         res.body.authToken.exp.should.be.a('number');
         res.body.authToken.should.have.property('token');
         // validate token
-        jwtVerify(res.body.authToken.token).should.equal('valid');
+        jwtVerify(res.body.authToken.token).should.not.equal('invalid');
         global.jwtToken = res.body.authToken.token;
         done();
       });
