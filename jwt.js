@@ -89,6 +89,8 @@ exports.verify = (token) => {
   }
 };
 
+exports.decode = token => jwt.decode(token);
+
 exports.secret = () => {
   if (keyOrSecretValue === 'secret') {
     return config.jwtSecret;
