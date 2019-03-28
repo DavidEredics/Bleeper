@@ -32,6 +32,8 @@ module.exports = {
     || confFile.host || config[env].host,
   name: args.name || process.env.NAME
     || confFile.name || config[env].name,
+  fqdn: args.fqdn || process.env.fqdn
+    || confFile.fqdn || config[env].fqdn,
   certPath: args.certPath || process.env.cert_path
     || confFile.certPath || config[env].certPath,
   cert: args.cert || process.env.cert
@@ -54,6 +56,8 @@ module.exports = {
     || confFile.openRegistration || config[env].openRegistration,
   openReceive: args.openReceive || process.env.openReceive
     || confFile.openReceive || config[env].openReceive,
+  openSend: args.openSend || process.env.openSend
+    || confFile.openSend || config[env].openSend,
   MongoDBurl: args.MONGODB_URI || args.MongoDBurl || process.env.MONGODB_URI
     || confFile.MongoDBurl || config[env].MongoDBurl,
   dbName: args.DB_NAME || args.dbName || process.env.DB_NAME
