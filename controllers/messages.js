@@ -44,18 +44,30 @@ exports.sendMessage = req => new Promise((resolve, reject) => {
             text: req.body.text,
             Date: new Date(Date.now()).toISOString(),
           };
+          const allowSelfSignedCert = () => {
+            if (config.openSend === 'valid') {
+              return true;
+            }
+            return false;
+          };
           const client = restify.createJsonClient({
             url: remoteServer,
             connectTimeout: 1000,
+            rejectUnauthorized: allowSelfSignedCert(),
           });
           return client.post('/message/send', Message, (err, request, res, obj) => {
             if (err) {
               if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT' || err.code === 'ConnectTimeout') {
                 resolve({ status: 504, msg: { Error: 'No response from the recipient server' } });
               }
-              if (err.message !== undefined && Object.prototype.hasOwnProperty.call(err.body, 'Error')) {
-                if (err.body.Error === 'The recipient user does not exists') {
-                  resolve({ status: 502, msg: { Error: 'The recipient user does not exists on the recipient server' } });
+              if (err.message !== undefined) {
+                if (err.message === 'self signed certificate') {
+                  resolve({ status: 502, msg: { Error: 'The recipient server has self signed certificate' } });
+                }
+                if (err.body !== undefined && Object.prototype.hasOwnProperty.call(err.body, 'Error')) {
+                  if (err.body.Error === 'The recipient user does not exists') {
+                    resolve({ status: 502, msg: { Error: 'The recipient user does not exists on the recipient server' } });
+                  }
                 }
               }
               reject(err);
