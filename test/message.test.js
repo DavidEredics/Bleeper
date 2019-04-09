@@ -4,13 +4,13 @@ const chaiHttp = require('chai-http');
 // eslint-disable-next-line no-unused-vars
 const should = chai.should();
 
-const server = require('../server');
+const { url } = require('../server');
 
 chai.use(chaiHttp);
 
 describe('/message/send', () => {
   it('Success: Message successfully sent', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/message/send')
       .set('Authorization', `Bearer ${global.jwtToken}`)
       .send({
@@ -27,7 +27,7 @@ describe('/message/send', () => {
       });
   });
   it('Error: The recipient user does not exists', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/message/send')
       .set('Authorization', `Bearer ${global.jwtToken}`)
       .send({
@@ -44,7 +44,7 @@ describe('/message/send', () => {
       });
   });
   it('Error: Missing property', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/message/send')
       .set('Authorization', `Bearer ${global.jwtToken}`)
       .send({
@@ -60,7 +60,7 @@ describe('/message/send', () => {
       });
   });
   it('Error: Request body is empty', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/message/send')
       .set('Authorization', `Bearer ${global.jwtToken}`)
       .end((err, res) => {
@@ -73,7 +73,7 @@ describe('/message/send', () => {
       });
   });
   it('Error: Invalid token', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/message/send')
       .send({
         to: 'TestUser',
@@ -92,7 +92,7 @@ describe('/message/send', () => {
 
 describe('/message/read', () => {
   it('successfully read messages', (done) => {
-    chai.request(server)
+    chai.request(url)
       .get('/message/read')
       .set('Authorization', `Bearer ${global.jwtToken}`)
       .end((err, res) => {
@@ -108,7 +108,7 @@ describe('/message/read', () => {
       });
   });
   it('Error: Invalid token', (done) => {
-    chai.request(server)
+    chai.request(url)
       .get('/message/read')
       .send({
         to: 'TestUser',

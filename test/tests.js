@@ -1,8 +1,12 @@
-const config = require('../config');
+process.env.NODE_ENV = 'test';
+process.env.HOST = '127.0.0.1';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
 const database = require('../database');
+const server = require('../server');
 
 before(() => {
-  config.DB_NAME = 'Bleeper-test';
+
 });
 
 describe('db connection', () => {
@@ -38,4 +42,5 @@ describe('cleanup after the tests', () => {
 });
 
 after(() => {
+  server.close();
 });

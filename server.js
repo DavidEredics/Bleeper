@@ -1,10 +1,18 @@
 const restify = require('restify');
 const fs = require('fs');
+const os = require('os');
 const rjwt = require('restify-jwt-community');
+const selfsigned = require('selfsigned');
 
 const config = require('./config');
 const database = require('./database');
 const jwtSecret = require('./jwt').secret;
+
+let url = `https://${config.host}:${config.port}`;
+const ipv6Regexp = /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/;
+if (ipv6Regexp.test(config.host)) {
+  url = `https://[${config.host}]:${config.port}`;
+}
 
 const allowHTTP1 = () => {
   if (config.allowHTTP1 === 'true') {
@@ -14,7 +22,7 @@ const allowHTTP1 = () => {
 };
 
 const serverOptions = () => {
-  if (config.env !== 'test') {
+  if (config.certPath !== undefined && config.cert !== undefined && config.key !== undefined) {
     const http2ServerOptions = {
       http2: {
         cert: fs.readFileSync(config.certPath + config.cert),
@@ -28,7 +36,46 @@ const serverOptions = () => {
     http2ServerOptions.name = config.name;
     return http2ServerOptions;
   }
-  return { name: config.name };
+
+  const cn = config.fqdn || config.name;
+  const san = () => {
+    if (cn.includes('.', 1)) {
+      return [{ type: 2, value: cn }];
+    }
+    const ipAddresses = [];
+    const nIf = os.networkInterfaces();
+    Object.keys(nIf).forEach((ifName) => {
+      nIf[ifName].forEach((iFace) => {
+        if (iFace.internal === false
+          && iFace.netmask !== 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff' && !iFace.address.startsWith('fe80')
+          && !iFace.address.startsWith('169') && !iFace.address.startsWith('127')) {
+          ipAddresses.push({ type: 7, ip: iFace.address });
+        }
+      });
+    });
+    return ipAddresses;
+  };
+  const certExpiration = () => {
+    if (config.env === 'test') {
+      return 1;
+    }
+    return 30;
+  };
+  const pems = selfsigned.generate([{ name: 'commonName', value: cn }], {
+    keySize: 2048,
+    algorithm: 'sha256',
+    extensions: [{ name: 'subjectAltName', altNames: san() }],
+    days: certExpiration(),
+  });
+  const http2ServerOptions = {
+    http2: {
+      cert: pems.cert,
+      key: pems.private,
+      allowHTTP1: allowHTTP1(),
+    },
+    name: config.name,
+  };
+  return http2ServerOptions;
 };
 
 const server = restify.createServer(serverOptions());
@@ -64,7 +111,7 @@ server.use(restify.plugins.bodyParser({
 server.use(restify.plugins.queryParser({ mapParams: false }));
 
 server.listen(config.port, config.host, () => {
-  console.log('%s listening at %s', server.name, server.url);
+  console.log('%s listening at %s', server.name, url);
 
   if (config.env !== 'test') {
     database.connect((err) => {
@@ -89,4 +136,10 @@ server.get('/', (req, res, next) => {
   next();
 });
 
-module.exports = server;
+const close = () => {
+  server.close(() => {
+    console.log('Server stopped');
+  });
+};
+
+module.exports = { url, close };

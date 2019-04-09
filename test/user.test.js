@@ -4,7 +4,7 @@ const chaiHttp = require('chai-http');
 // eslint-disable-next-line no-unused-vars
 const should = chai.should();
 
-const server = require('../server');
+const { url } = require('../server');
 
 const jwtVerify = require('../jwt').verify;
 
@@ -12,7 +12,7 @@ chai.use(chaiHttp);
 
 describe('/user/register', () => {
   it('Success: User successfully added', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/user/register')
       .send({
         name: 'TestUser',
@@ -29,7 +29,7 @@ describe('/user/register', () => {
       });
   });
   it('Error: A user already exists with this name', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/user/register')
       .send({
         name: 'TestUser',
@@ -46,7 +46,7 @@ describe('/user/register', () => {
       });
   });
   it('Error: Missing property', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/user/register')
       .send({
         name: 'TestUser',
@@ -62,7 +62,7 @@ describe('/user/register', () => {
       });
   });
   it('Error: Request body is empty', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/user/register')
       .end((err, res) => {
         if (err) { done(err); }
@@ -77,7 +77,7 @@ describe('/user/register', () => {
 
 describe('/user/auth', () => {
   it('User successfully authenticate', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/user/auth')
       .send({
         name: 'TestUser',
@@ -100,7 +100,7 @@ describe('/user/auth', () => {
       });
   });
   it('incorrect password', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/user/auth')
       .send({
         name: 'TestUser',
@@ -116,7 +116,7 @@ describe('/user/auth', () => {
       });
   });
   it('incorrect username', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/user/auth')
       .send({
         name: 'testuser',
@@ -132,7 +132,7 @@ describe('/user/auth', () => {
       });
   });
   it('Error: Missing property', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/user/auth')
       .send({
         name: 'TestUser',
@@ -147,7 +147,7 @@ describe('/user/auth', () => {
       });
   });
   it('Error: Request body is empty', (done) => {
-    chai.request(server)
+    chai.request(url)
       .post('/user/auth')
       .end((err, res) => {
         if (err) { done(err); }
