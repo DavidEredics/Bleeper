@@ -13,6 +13,9 @@ const ipv6Regexp = /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:
 if (ipv6Regexp.test(config.host)) {
   url = `https://[${config.host}]:${config.port}`;
 }
+if (config.host === '') {
+  url = `https://[::]:${config.port}`;
+}
 
 const allowHTTP1 = () => {
   if (config.allowHTTP1 === 'true') {

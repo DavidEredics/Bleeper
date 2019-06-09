@@ -2,7 +2,7 @@
   "development": {
     "name": "Bleeper-dev",
     "port": 8443,
-    "host": "::1",
+    "host": "localhost",
     "allowHTTP1": "true",
     "jwtSecret": "",
     "jwtKeyPath": "../key/",
@@ -16,7 +16,7 @@
   "test": {
     "name": "Bleeper-test",
     "port": 8443,
-    "host": "::1",
+    "host": "localhost",
     "allowHTTP1": "true",
     "jwtSecret": "",
     "jwtKeyPath": "../key/",
@@ -30,7 +30,7 @@
   "production": {
     "name": "Bleeper",
     "port": 443,
-    "host": "::",
+    "host": "",
     "allowHTTP1": "false",
     "certPath": "../cert/",
     "cert": "cert.pem",
