@@ -58,6 +58,8 @@ module.exports = {
     || confFile.openReceive || config[env].openReceive,
   openSend: args.openSend || process.env.openSend
     || confFile.openSend || config[env].openSend,
+  corsOrigin: args.corsOrigin || process.env.corsOrigin
+    || confFile.corsOrigin || config[env].corsOrigin,
   MongoDBurl: args.MONGODB_URI || args.MongoDBurl || process.env.MONGODB_URI
     || confFile.MongoDBurl || config[env].MongoDBurl,
   dbName: args.DB_NAME || args.dbName || process.env.DB_NAME

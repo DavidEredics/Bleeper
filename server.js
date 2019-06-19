@@ -3,6 +3,7 @@ const fs = require('fs');
 const os = require('os');
 const rjwt = require('restify-jwt-community');
 const selfsigned = require('selfsigned');
+const corsMiddleware = require('restify-cors-middleware');
 
 const config = require('./config');
 const database = require('./database');
@@ -112,6 +113,20 @@ server.use(restify.plugins.bodyParser({
 }));
 
 server.use(restify.plugins.queryParser({ mapParams: false }));
+
+// CORS
+if (config.corsOrigin !== undefined && config.corsOrigin !== '') {
+  const corsOrigin = config.corsOrigin.split(', ');
+
+  const cors = corsMiddleware({
+    origins: corsOrigin,
+    allowHeaders: ['Authorization'],
+    exposeHeaders: ['Authorization'],
+  });
+
+  server.pre(cors.preflight);
+  server.use(cors.actual);
+}
 
 server.listen(config.port, config.host, () => {
   console.log('%s listening at %s', server.name, url);
