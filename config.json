@@ -9,7 +9,6 @@
     "jwtKeyPrivate": "jwtRS256.key",
     "jwtKeyPublic": "jwtRS256.pem",
     "MongoDBurl": "mongodb://localhost/",
-    "dbName": "Bleeper-dev",
     "openRegistration": "false",
     "openReceive": "false"
   },
@@ -41,7 +40,6 @@
     "jwtKeyPrivate": "jwtRS256.key",
     "jwtKeyPublic": "jwtRS256.pem",
     "MongoDBurl": "mongodb://localhost/",
-    "dbName": "Bleeper",
     "openRegistration": "false",
     "openReceive": "false"
   }

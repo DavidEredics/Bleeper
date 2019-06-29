@@ -35,7 +35,11 @@ const connect = (cb) => {
       if (err) {
         cb(err);
       } else {
-        db = client.db(config.dbName);
+        if (config.dbName) {
+          db = client.db(config.dbName);
+        } else {
+          db = client.db();
+        }
         cb();
       }
     });
