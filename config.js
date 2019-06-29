@@ -34,6 +34,8 @@ module.exports = {
     || confFile.name || config[env].name,
   fqdn: args.fqdn || process.env.fqdn
     || confFile.fqdn || config[env].fqdn,
+  noHTTPS: args.http || process.env.http
+    || confFile.http || config[env].http,
   certPath: args.certPath || process.env.cert_path
     || confFile.certPath || config[env].certPath,
   cert: args.cert || process.env.cert

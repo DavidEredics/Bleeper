@@ -34,7 +34,7 @@ exports.sendMessage = req => new Promise((resolve, reject) => {
           const remoteUser = req.body.to.split('@')[0];
           const nodeVersion = process.version.substr(1).split('.');
           const localServer = () => {
-            if ((nodeVersion[0] >= 11 && nodeVersion[1] >= 2) || nodeVersion[0] > 11) {
+            if (((nodeVersion[0] >= 11 && nodeVersion[1] >= 2) || nodeVersion[0] > 11) && config.noHTTPS !== 'true') {
               return config.fqdn || req.connection.getCertificate().subject.CN
               || req.client.servername;
             }

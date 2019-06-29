@@ -10,12 +10,21 @@ const database = require('./database');
 const jwtSecret = require('./jwt').secret;
 
 let url = `https://${config.host}:${config.port}`;
+if (config.noHTTPS === 'true') {
+  url = `http://${config.host}:${config.port}`;
+}
 const ipv6Regexp = /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/;
-if (ipv6Regexp.test(config.host)) {
+if (ipv6Regexp.test(config.host) && config.noHTTPS !== 'true') {
   url = `https://[${config.host}]:${config.port}`;
 }
-if (config.host === '') {
+if (ipv6Regexp.test(config.host) && config.noHTTPS === 'true') {
+  url = `http://[${config.host}]:${config.port}`;
+}
+if (config.host === '' && config.noHTTPS !== 'true') {
   url = `https://[::]:${config.port}`;
+}
+if (config.host === '' && config.noHTTPS === 'true') {
+  url = `http://[::]:${config.port}`;
 }
 
 const allowHTTP1 = () => {
@@ -26,6 +35,10 @@ const allowHTTP1 = () => {
 };
 
 const serverOptions = () => {
+  if (config.noHTTPS === 'true') {
+    const http2ServerOptions = { name: config.name };
+    return http2ServerOptions;
+  }
   if (config.certPath !== undefined && config.cert !== undefined && config.key !== undefined) {
     const http2ServerOptions = {
       http2: {
