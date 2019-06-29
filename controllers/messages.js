@@ -127,7 +127,7 @@ exports.sendMessage = req => new Promise((resolve, reject) => {
             }
             resolve({ status: 400, msg: { Error: 'The recipient user does not exists' } });
           });
-          if (config.openReceive === 'valid' && req.body.from.includes('@', 1)) {
+          if (config.openReceive === 'valid' && from.includes('@', 1)) {
             const nodeVersion = process.version.substr(1).split('.');
             const localServer = () => {
               if ((nodeVersion[0] >= 11 && nodeVersion[1] >= 2) || nodeVersion[0] > 11) {
