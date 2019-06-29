@@ -1,4 +1,7 @@
 const restify = require('restify-clients');
+const dns = require('dns');
+const os = require('os');
+const sslChecker = require('ssl-checker');
 
 const jwt = require('../jwt');
 const database = require('../database');
@@ -15,14 +18,14 @@ exports.sendMessage = req => new Promise((resolve, reject) => {
           }
           if (req.header('Authorization')) {
             const token = req.header('Authorization').split(' ');
-            if (config.openSend === 'true') {
+            if (config.openSend === 'true' && !req.body.to.includes('@', 1)) {
               const decoded = jwt.decode(token[1]);
               return decoded.name;
             }
             const decoded = jwt.verify(token[1]);
             return decoded.name;
           }
-          if (req.body.from && config.openSend === 'true') {
+          if (req.body.from && config.openSend === 'true' && !req.body.to.includes('@', 1)) {
             return req.body.from;
           }
         };
@@ -50,7 +53,13 @@ exports.sendMessage = req => new Promise((resolve, reject) => {
             }
             return false;
           };
+          const userAgent = `${'Bleeper/restify'
+            + ' ('}${os.arch()}-${os.platform()}; `
+            + `v8/${process.versions.v8}; `
+            + `OpenSSL/${process.versions.openssl}) `
+            + `node/${process.versions.node}`;
           const client = restify.createJsonClient({
+            userAgent,
             url: remoteServer,
             connectTimeout: 1000,
             rejectUnauthorized: allowSelfSignedCert(),
@@ -83,22 +92,25 @@ exports.sendMessage = req => new Promise((resolve, reject) => {
           if (typeof req.user !== 'undefined') {
             return req.user.name;
           }
-          if (config.openReceive === 'true') {
-            if (req.header('Authorization')) {
-              const token = req.header('Authorization').split(' ');
+          if (req.header('Authorization')) {
+            const token = req.header('Authorization').split(' ');
+            if (config.openReceive === 'true') {
               const decoded = jwt.decode(token[1]);
               return decoded.name;
             }
-            if (req.body.from) {
-              return req.body.from;
-            }
+            const decoded = jwt.verify(token[1]);
+            return decoded.name;
+          }
+          if (req.body.from && (config.openReceive === 'true' || (config.openReceive === 'valid' && req.body.from.includes('@', 1)))) {
+            return req.body.from;
           }
         };
         if (sender()) {
-          return userExists(req.body.to).then((recipientExists) => {
+          const from = sender();
+          const saveMessage = () => userExists(req.body.to).then((recipientExists) => {
             if (recipientExists) {
               const Message = {
-                from: sender(),
+                from,
                 to: req.body.to,
                 text: req.body.text,
                 Date: new Date(Date.now()).toISOString(),
@@ -115,6 +127,42 @@ exports.sendMessage = req => new Promise((resolve, reject) => {
             }
             resolve({ status: 400, msg: { Error: 'The recipient user does not exists' } });
           });
+          if (config.openReceive === 'valid' && req.body.from.includes('@', 1)) {
+            const nodeVersion = process.version.substr(1).split('.');
+            const localServer = () => {
+              if ((nodeVersion[0] >= 11 && nodeVersion[1] >= 2) || nodeVersion[0] > 11) {
+                return config.fqdn || req.connection.getCertificate().subject.CN
+                || req.client.servername;
+              }
+              return config.fqdn || req.client.servername;
+            };
+            const senderServer = from.split('@')[1].split(':')[0];
+            const addressValid = new Promise(
+              addressResolve => dns.lookup(senderServer, { all: true }, (err, addresses) => {
+                if (!err) {
+                  return addresses.forEach((address) => {
+                    if (address.address === req.connection.remoteAddress) {
+                      addressResolve(true);
+                    }
+                  });
+                }
+                resolve(false);
+              }),
+            );
+            const senderServerPort = from.split('@')[1].split(':')[1];
+            const sslValid = sslChecker(senderServer, 'GET', senderServerPort);
+            return Promise.all([addressValid, sslValid]).then((valid) => {
+              if (req.headers.host !== `${localServer()}:${config.port}` || req.headers['user-agent'].indexOf('Bleeper') === -1 || !valid[0] || !valid[1].valid) {
+                resolve({ status: 500, msg: { Error: 'The origin of the message can not be validated' } });
+              } else {
+                return saveMessage();
+              }
+            }).catch((error) => {
+              console.log(error);
+              resolve({ status: 500, msg: { Error: 'The origin of the message can not be validated' } });
+            });
+          }
+          return saveMessage();
         }
         resolve({ status: 400, msg: { Error: 'The sender is unidentifiable' } });
       }

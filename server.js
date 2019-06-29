@@ -95,7 +95,7 @@ const unlessPath = [
 if (config.openReg === 'true') {
   unlessPath.push('/user/register');
 }
-if (config.openReceive === 'true') {
+if (config.openReceive === 'true' || config.openReceive === 'valid') {
   unlessPath.push('/message/send');
 }
 server.use(rjwt({ secret: secretCallback }).unless({ path: unlessPath }));
