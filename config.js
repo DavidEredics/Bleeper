@@ -52,6 +52,8 @@ module.exports = {
     || confFile.jwtKeyPrivate || config[env].jwtKeyPrivate,
   jwtKeyPub: args.jwtKeyPublic || process.env.jwtKeyPublic
     || confFile.jwtKeyPublic || config[env].jwtKeyPublic,
+  encKey: args.encKey || process.env.encKey
+    || confFile.encKey || config[env].encKey,
   allowHTTP1: args.allowHTTP1 || args.http1 || process.env.allowHTTP1
     || confFile.allowHTTP1 || config[env].allowHTTP1,
   openReg: args.openReg || process.env.openReg

@@ -6,6 +6,7 @@ const sslChecker = require('ssl-checker');
 const jwt = require('../jwt');
 const database = require('../database');
 const { userExists } = require('./users');
+const crypto = require('../crypto');
 const config = require('../config');
 
 exports.sendMessage = req => new Promise((resolve, reject) => {
@@ -112,7 +113,7 @@ exports.sendMessage = req => new Promise((resolve, reject) => {
               const Message = {
                 from,
                 to: req.body.to,
-                text: req.body.text,
+                text: crypto.encrypt(req.body.text),
                 Date: new Date(Date.now()).toISOString(),
               };
               return database.DB().collection('Messages').insertOne(Message).then((insertResult) => {
@@ -182,6 +183,9 @@ exports.readMessages = req => new Promise((resolve, reject) => {
       if (messages) {
         if (messages.length === 0) {
           resolve({ status: 204 });
+        }
+        for (let i = 0; i < messages.length; i += 1) {
+          messages[i].text = crypto.decrypt(messages[i].text.buffer);
         }
         resolve({ status: 200, msg: messages });
       }
