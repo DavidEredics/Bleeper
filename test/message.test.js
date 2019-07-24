@@ -107,6 +107,20 @@ describe('/message/read', () => {
         done();
       });
   });
+  it('message equals with message sent', (done) => {
+    chai.request(url)
+      .get('/message/read')
+      .set('Authorization', `Bearer ${global.jwtToken}`)
+      .end((err, res) => {
+        if (err) { done(err); }
+        res.should.have.status(200);
+        res.should.be.json;
+        res.body[0].from.should.equal('TestUser');
+        res.body[0].to.should.equal('TestUser');
+        res.body[0].text.should.equal('text');
+        done();
+      });
+  });
   it('Error: Invalid token', (done) => {
     chai.request(url)
       .get('/message/read')
