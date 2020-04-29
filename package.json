@@ -28,21 +28,21 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^8.5.1",
-    "minimist": "^1.2.0",
-    "mongodb": "^3.3.1",
-    "restify": "^8.4.0",
-    "restify-clients": "^2.6.7",
+    "minimist": "^1.2.5",
+    "mongodb": "^3.5.7",
+    "restify": "^8.5.1",
+    "restify-clients": "^2.6.9",
     "restify-cors-middleware": "^1.1.1",
-    "restify-jwt-community": "^1.1.0",
-    "selfsigned": "^1.10.4",
-    "ssl-checker": "^1.2.1"
+    "restify-jwt-community": "^1.1.3",
+    "selfsigned": "^1.10.7",
+    "ssl-checker": "^2.0.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.2.0",
-    "eslint-plugin-import": "^2.18.2",
-    "mocha": "^6.2.0"
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "mocha": "^7.1.2"
   }
 }
