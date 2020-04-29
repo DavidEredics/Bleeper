@@ -9,7 +9,7 @@ const { userExists } = require('./users');
 const crypto = require('../crypto');
 const config = require('../config');
 
-exports.sendMessage = req => new Promise((resolve, reject) => {
+exports.sendMessage = (req) => new Promise((resolve, reject) => {
   if (req.body) {
     if (req.body.to && req.body.text) {
       if (req.body.to.includes('@', 1)) {
@@ -139,7 +139,7 @@ exports.sendMessage = req => new Promise((resolve, reject) => {
             };
             const senderServer = from.split('@')[1].split(':')[0];
             const addressValid = new Promise(
-              addressResolve => dns.lookup(senderServer, { all: true }, (err, addresses) => {
+              (addressResolve) => dns.lookup(senderServer, { all: true }, (err, addresses) => {
                 if (!err) {
                   return addresses.forEach((address) => {
                     if (address.address === req.connection.remoteAddress) {
@@ -173,7 +173,7 @@ exports.sendMessage = req => new Promise((resolve, reject) => {
   resolve({ status: 400, msg: { Error: 'Request body is empty' } });
 });
 
-exports.readMessages = req => new Promise((resolve, reject) => {
+exports.readMessages = (req) => new Promise((resolve, reject) => {
   const limit = Number(req.query.limit) || 0;
   return database.DB().collection('Messages').find({ to: req.user.name })
     .sort({ Date: 1 })

@@ -12,14 +12,14 @@ function createIndexes() {
 }
 
 // checks if a User exists with the given Name
-exports.userExists = userName => database.DB().collection('Users').countDocuments({ name: userName }, { limit: 1 }).then((countResult) => {
+exports.userExists = (userName) => database.DB().collection('Users').countDocuments({ name: userName }, { limit: 1 }).then((countResult) => {
   if (countResult === 0) {
     return false;
   }
   return true;
 });
 
-exports.addUser = req => new Promise((resolve, reject) => {
+exports.addUser = (req) => new Promise((resolve, reject) => {
   createIndexes();
   if (req.body) {
     if (req.body.name && req.body.email && req.body.password) {
@@ -62,7 +62,7 @@ exports.addUser = req => new Promise((resolve, reject) => {
   resolve({ status: 400, msg: { Error: 'Request body is empty' } });
 });
 
-exports.authUser = req => new Promise((resolve, reject) => {
+exports.authUser = (req) => new Promise((resolve, reject) => {
   if (req.body) {
     if (req.body.name && req.body.password) {
       return this.userExists(req.body.name).then((nameExists) => {
