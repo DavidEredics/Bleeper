@@ -37,7 +37,6 @@ keyOrSecret.then((result) => {
   process.exit(1);
 });
 
-
 exports.sign = (name) => {
   function jwtKey() {
     // sign with RSA SHA256
